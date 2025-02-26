@@ -3,6 +3,8 @@ Architecture
 
 The architecture of the system is as follows:
 
+.. image:: ../_static/Architecture.png
+
 Frontend
 ------
 
@@ -15,6 +17,10 @@ The frontend is also built using Material-UI (MUI), a popular React UI framework
 
 Components
 ~~~~~~~~~~~
+The architecture of the frontend components is as follows:
+
+.. image:: ../_static/Components.svg
+
 For details about the components used in the frontend, please refer to the :doc:`components` section.
 
 
@@ -26,15 +32,63 @@ The backend is built using Python Flask. It is responsible for handling API requ
 Database
 ~~~~~~~~~~~
 
-The database is SQLit, which is a NoSQL database. It is used to store user data, such as user profiles, preferences, and other information. The database is accessed by the backend through Mongoose, which is an Object Data Modeling (ODM) library for MongoDB and Node.js.
+The database is built using SQLite for its lightweight, serverless, and file-based architecture, making it ideal for development and small-scale applications. To enhance database management, we adopted SQLAlchemy as our ORM, enabling Pythonic interaction with the database. This combination ensures a robust, maintainable, and scalable data management solution.
 
 API
 ~~~~~~~~~~~
 
 The system provides RESTful APIs for the frontend to interact with the backend. The APIs are built using Express and are responsible for handling API requests and returning responses to the frontend. The APIs are secured using JWT (JSON Web Tokens) for authentication and authorization.
 
-File system
-~~~~~~~~~~~
-The file system is a key component of the backend. It is responsible for storing and retrieving files from the database. The file system is implemented using the SQLAlchemy ORM and the Flask-Uploads extension.
+For details about the api used in the backend, please refer to the :doc:`api` section.
 
-The file system is used to store files that are uploaded by users. The files are stored in the database as binary data. The file system also provides a way to retrieve the files from the database and serve them to the user.
+File System
+~~~~~~~~~~~
+All output files will be organized in a structure following **root_directory - benchmark - model - language**. 
+
+Synchronizes the database with the directory structure by generating an index of tasks, benchmarks, models, 
+and available language data. 
+
+The function ``generate_index_json(root_dir)`` in ``app.py`` scans a specified root directory and saves the structure to ``tasks.json`` file.
+
+.. function:: generate_index_json(root_dir)
+
+   :param root_dir: The root directory containing benchmark subdirectories.
+   :type root_dir: str
+   :returns: None (Writes output to a JSON file)
+   :rtype: None
+
+.. note:: Each **task type** and its corresponding **benchmarks** are predefined in ``TASK_BENCHMARK_MAP``.
+
+**Example Usage:**
+
+.. code-block:: python
+
+  generate_index_json("/path/to/root_directory")
+
+**JSON Output Structure Example:**
+
+.. code-block:: json
+
+  {
+      "text_classification": {
+          "benchmark1": {
+              "model1": ["language1", "language2",...],
+              "model2": ["language1",...]
+              ...
+          },
+          "benchmark2": {
+              "model3": ["language3", "language4"]
+              ...
+          }
+          ...
+      },
+      "translation": {
+          "benchmarkX": {
+              "modelA": ["EN-language5", "EN-language6"],
+              "modelB": ["language7-EN"]
+              ...
+          }
+          ...
+      }
+      ...
+  }
